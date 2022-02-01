@@ -1,0 +1,3 @@
+this is folder of executable files
+if you want to download everything with libraries and other lib files download the zip files
+or if you want to download one executable file then download pyinstaller one
